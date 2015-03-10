@@ -5,9 +5,13 @@ import console
 import sys
 import errno
 
-ZIP_FILE = 'wc_sync/repo.zip'
+try:
+    _, path, data = sys.argv
+except ValueError:
+    fmt = 'Missing commandline parameters: {} path data'
+    sys.exit(fmt.format(__file__.rpartition('/')[2].rstrip('.py')))
 
-path = sys.argv[1]
+ZIP_FILE = 'wc_sync/repo.zip'
 
 try:
 	os.makedirs(os.path.join(os.path.expanduser('~/Documents'), path))
@@ -18,10 +22,9 @@ except OSError, e:
 
 zipF = os.path.join(os.path.expanduser('~/Documents'), ZIP_FILE)
 with open(zipF, 'w') as zip:
-	zip.write(base64.b64decode(sys.argv[2]))
+	zip.write(base64.b64decode(data))
 	
 z = zipfile.ZipFile(zipF)	
 z.extractall(os.path.join(os.path.expanduser('~/Documents'), path))
 os.remove(zipF)
 console.hud_alert(path + ' Downloaded')
-
