@@ -21,7 +21,7 @@ def showPopupInputAlert(title, handler, text, yPos):
 	v['label'].text = title
 	v['buttonOK'].action = handler
 	xPos = 990
-	yPos = yPos + 84
+	yPos += 84
 	v['textfield'].text = text
 	v['textfield'].begin_editing()
 	v.height = 90
@@ -40,7 +40,7 @@ def showPopupButton(title, handler, yPos):
 	v['button'].title = title
 	v['button'].action = handler
 	xPos = 990
-	yPos = yPos + 75
+	yPos += 75
 	v.height = 6
 	v.present('popover', popover_location=(xPos,yPos), hide_title_bar=True)
 	
