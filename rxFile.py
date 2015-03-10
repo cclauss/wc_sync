@@ -6,8 +6,13 @@ import os
 import errno
 import base64
 
-path = sys.argv[1] #The path sent through with the x-callback-url.
-text = base64.b64decode(sys.argv[2]) # The text from the file
+try:
+    _, path, data = sys.argv
+except ValueError:
+    fmt = 'Missing commandline parameters: {} path data'
+    sys.exit(fmt.format(__file__.rpartition('/')[2].rstrip('.py')))
+
+text = base64.b64decode(data) # The text from the file
 
 #Create directory structure if missing
 try:
