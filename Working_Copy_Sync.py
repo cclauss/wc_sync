@@ -52,8 +52,7 @@ def info():
 	info = editor.get_path()
 	#documentsDir starts with '/private' whereas info does not
 	fullPath = info[len(documentsDir)-7:]
-	path = fullPath.split('/',1)[1]
-	repo = fullPath.split('/',1)[0]
+	repo, path = fullPath.split('/',1)
 	return repo,path
 	
 def sendB64(repo,path,text):
@@ -127,8 +126,7 @@ def checkKey():
 	
 def main():
 	checkKey()
-	view = ui.load_view('Working_Copy_Sync')
-	view.present('sidebar')
+	ui.load_view('Working_Copy_Sync').present('sidebar')
 
 #psuedo main() function
 if __name__ == "__main__":
