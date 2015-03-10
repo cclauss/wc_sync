@@ -109,7 +109,7 @@ def getZipPt1(sender):
 
 def getZipPt2(sender):
 	repo = getPopupText(sender)
-	if len(repo) > 0: 
+	if repo: 
 		url = 'working-copy://x-callback-url/zip/?'
 		f = {'repo':repo, 'key':key}
 		success ='pythonista://'+INSTALL_PATH+'/rxZip.py?action=run&argv='+repo+'&argv='
