@@ -10,7 +10,7 @@ try:
     _, path, data = sys.argv
 except ValueError:
     fmt = 'Missing commandline parameters: {} path data'
-    sys.exit(fmt.format(__file__.rpartition('/')[2].rstrip('.py')))
+    sys.exit(fmt.format(__file__.rpartition('/')[2][:-3])) # strip off '.py'
 
 text = base64.b64decode(data) # The text from the file
 
