@@ -52,7 +52,7 @@ def info():
 	info = editor.get_path()
 	#documentsDir starts with '/private' whereas info does not
 	fullPath = info[len(documentsDir)-7:]
-	repo, path = fullPath.split('/',1)
+	repo, path = fullPath.split('/',1)[:2]
 	return repo,path
 	
 def sendB64(repo,path,text):
@@ -120,7 +120,7 @@ def getZipPt2(sender):
 def checkKey():
 	global key
 	key = keychain.get_password('wcSync','xcallback')
-	if key == None:
+	if not key:
 		pwd = console.password_alert('Working Copy Key')
 		keychain.set_password('wcSync','xcallback',pwd)
 	
