@@ -24,4 +24,3 @@ z = zipfile.ZipFile(zipF)
 z.extractall(os.path.join(os.path.expanduser('~/Documents'), path))
 os.remove(zipF)
 console.hud_alert(path + ' Downloaded')
-
