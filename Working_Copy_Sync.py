@@ -106,7 +106,10 @@ def checkKey():
 def main():
 	checkKey()
 	view = ui.load_view('Working_Copy_Sync')
-	view.present('sheet', hide_title_bar=True)
+	try:
+		view.present('sheet', hide_title_bar=True)
+	except KeyboardInterrupt:
+		pass
 
 if __name__ == "__main__":
 	main()
