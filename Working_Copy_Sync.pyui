@@ -12,7 +12,8 @@
 
         ],
         "attributes" : {
-          "font_name" : "<System>",
+          "flex" : "WH",
+          "font_size" : 18,
           "frame" : "{{195, 254}, {150, 32}}",
           "uuid" : "178CAC2A-427F-43B0-9124-7FA6D5E6A499",
           "text" : "",
@@ -20,20 +21,19 @@
           "class" : "Label",
           "background_color" : "RGBA(0.238208,0.238208,0.238208,1.000000)",
           "name" : "label1",
-          "font_size" : 18
+          "font_name" : "<System>"
         }
       },
       {
         "selected" : false,
-        "frame" : "{{69, 359}, {397, 80}}",
+        "frame" : "{{69, 427}, {397, 80}}",
         "class" : "Button",
         "nodes" : [
 
         ],
         "attributes" : {
           "uuid" : "2F36CD19-281A-4F86-986D-486B5036FB54",
-          "name" : "open_wc",
-          "font_size" : 15,
+          "flex" : "W",
           "corner_radius" : 5,
           "border_color" : "RGBA(1.000000,1.000000,1.000000,1.000000)",
           "tint_color" : "RGBA(1.000000,1.000000,1.000000,1.000000)",
@@ -42,20 +42,20 @@
           "action" : "open_wc",
           "enabled" : true,
           "font_bold" : false,
-          "flex" : ""
+          "name" : "open_wc",
+          "font_size" : 15
         }
       },
       {
-        "selected" : false,
-        "frame" : "{{69, 59}, {397, 80}}",
+        "selected" : true,
+        "frame" : "{{69, 75}, {397, 80}}",
         "class" : "Button",
         "nodes" : [
 
         ],
         "attributes" : {
           "uuid" : "259744AD-6617-40E9-86E2-6EA4C8B9EF2D",
-          "name" : "clone_repo",
-          "font_size" : 15,
+          "flex" : "W",
           "corner_radius" : 5,
           "border_color" : "RGBA(1.000000,1.000000,1.000000,1.000000)",
           "tint_color" : "RGBA(1.000000,1.000000,1.000000,1.000000)",
@@ -64,20 +64,20 @@
           "action" : "getZipPt1",
           "enabled" : true,
           "font_bold" : false,
-          "flex" : ""
+          "name" : "clone_repo",
+          "font_size" : 15
         }
       },
       {
         "selected" : false,
-        "frame" : "{{69, 209}, {180, 80}}",
+        "frame" : "{{69, 163}, {397, 80}}",
         "class" : "Button",
         "nodes" : [
 
         ],
         "attributes" : {
           "uuid" : "D15A4B5E-FBE3-4416-A091-AE62E5D34B74",
-          "name" : "pull_from_repo",
-          "font_size" : 15,
+          "flex" : "W",
           "corner_radius" : 5,
           "border_color" : "RGBA(1.000000,1.000000,1.000000,1.000000)",
           "tint_color" : "RGBA(1.000000,1.000000,1.000000,1.000000)",
@@ -86,20 +86,20 @@
           "action" : "copyFromWCPt1",
           "enabled" : true,
           "font_bold" : false,
-          "flex" : ""
+          "name" : "pull_from_repo",
+          "font_size" : 15
         }
       },
       {
         "selected" : false,
-        "frame" : "{{286, 161}, {180, 80}}",
+        "frame" : "{{69, 251}, {397, 80}}",
         "class" : "Button",
         "nodes" : [
 
         ],
         "attributes" : {
           "uuid" : "1DA51882-FF86-4852-A5EF-4A31A5932D23",
-          "name" : "push_to_repo",
-          "font_size" : 15,
+          "flex" : "W",
           "corner_radius" : 5,
           "border_color" : "RGBA(1.000000,1.000000,1.000000,1.000000)",
           "tint_color" : "RGBA(1.000000,1.000000,1.000000,1.000000)",
@@ -108,20 +108,20 @@
           "action" : "sendToWCPt1",
           "enabled" : true,
           "font_bold" : false,
-          "flex" : ""
+          "name" : "push_to_repo",
+          "font_size" : 15
         }
       },
       {
         "selected" : false,
-        "frame" : "{{286, 258}, {180, 80}}",
+        "frame" : "{{69, 339}, {397, 80}}",
         "class" : "Button",
         "nodes" : [
 
         ],
         "attributes" : {
           "uuid" : "E21AA15B-115B-4A88-B395-89549220667C",
-          "name" : "push_ui_to_repo",
-          "font_size" : 15,
+          "flex" : "W",
           "corner_radius" : 5,
           "border_color" : "RGBA(1.000000,1.000000,1.000000,1.000000)",
           "tint_color" : "RGBA(1.000000,1.000000,1.000000,1.000000)",
@@ -130,19 +130,21 @@
           "action" : "sendPYUIToWCPt1",
           "enabled" : true,
           "font_bold" : false,
-          "flex" : ""
+          "name" : "push_ui_to_repo",
+          "font_size" : 15
         }
       },
       {
         "selected" : false,
-        "frame" : "{{494, 6}, {40, 40}}",
+        "frame" : "{{494, 17}, {40, 40}}",
         "class" : "Button",
         "nodes" : [
 
         ],
         "attributes" : {
           "action" : "close_view",
-          "image_name" : "Frameworks\/PythonistaKit.framework\/Media\/Images\/iob\/close_round_24",
+          "flex" : "LB",
+          "font_size" : 32,
           "frame" : "{{230, 254}, {80, 32}}",
           "tint_color" : "RGBA(1.000000,1.000000,1.000000,1.000000)",
           "title" : "",
@@ -150,7 +152,7 @@
           "uuid" : "2ECD1D77-AE01-4AA9-8D16-3B7BFF8A22DF",
           "font_bold" : false,
           "name" : "close_view",
-          "font_size" : 32
+          "image_name" : "Frameworks\/PythonistaKit.framework\/Media\/Images\/iob\/close_round_24"
         }
       }
     ],

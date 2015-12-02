@@ -106,8 +106,12 @@ def checkKey():
 def main():
 	checkKey()
 	view = ui.load_view('Working_Copy_Sync')
+	width, height = ui.get_screen_size()
 	try:
-		view.present('sheet', hide_title_bar=True)
+		if width >= 768:
+			view.present('sheet', hide_title_bar=True)
+		else:
+			view.present(hide_title_bar=True)
 	except KeyboardInterrupt:
 		pass
 
