@@ -6,6 +6,9 @@ import webbrowser as wb
 import urllib
 import base64
 import keychain
+import sys
+import errno
+import zipfile
 
 def is_ipad():
 	''' Helper method to determine if we are on an 
@@ -75,7 +78,7 @@ class WorkingCopySync():
 			action = 'zip'
 			payload = {
 				'repo': repo_name,
-				'x-success': 'pythonista://{install_path}/rxZip.py?action=run&argv={repo_name}&argv='.format(install_path=self.install_path, repo_name=repo_name)
+				'x-success': 'pythonista://{install_path}/Working_Copy_Sync.py?action=run&argv=copy_repo&argv={repo_name}&argv='.format(install_path=self.install_path, repo_name=repo_name)
 			}
 			self._send_to_working_copy(action, payload)
 		sender.superview.close()		
@@ -117,7 +120,7 @@ class WorkingCopySync():
 			'repo': self.repo,
 			'path': self.path,
 			'base64': '1',
-			'x-success': 'pythonista://{install_path}/rxFile.py?action=run&argv={full_path}&argv='.format(install_path=self.install_path, full_path=os.path.join(self.repo, self.path))
+			'x-success': 'pythonista://{install_path}/Working_Copy_Sync.py?action=run&argv=overwrite_file&argv={full_path}&argv='.format(install_path=self.install_path, full_path=os.path.join(self.repo, self.path))
 		}
 		self._send_to_working_copy(action, payload)
 		sender.superview.close()		
@@ -139,10 +142,58 @@ class WorkingCopySync():
 		except KeyboardInterrupt:
 			pass		
 			
+	def urlscheme_copy_repo_from_wc(self, path, b64_contents):
+		tmp_zip_location = self.install_path + 'repo.zip'
+		
+		try:
+			os.makedirs(os.path.join(os.path.expanduser('~/Documents'), path))
+		except OSError, e:
+			if e.errno != errno.EEXIST:
+				raise e
+			console.alert('Overwriting existing directory', button1='Continue')
 
+		zip_file_location = os.path.join(os.path.expanduser('~/Documents'), tmp_zip_location)
+		with open(zip_file_location, 'w') as f:
+			f.write(base64.b64decode(b64_contents))
+			
+		zip_file = zipfile.ZipFile(zip_file_location)	
+		zip_file.extractall(os.path.join(os.path.expanduser('~/Documents'), path))
+		os.remove(zip_file_location)
+		console.hud_alert(path + ' Downloaded')
+		
+	def urlscheme_overwrite_file_with_wc_copy(self, path, b64_contents):
+		text = base64.b64decode(b64_contents)
+		
+		try:
+			os.makedirs(os.path.join(os.path.expanduser('~/Documents'), path))
+		except OSError, e:
+			if e.errno != errno.EEXIST:
+				raise e
+				
+		full_file_path = os.path.join(os.path.expanduser('~/Documents'), path)
+		with open(full_file_path, 'w') as f:
+			f.write(text)
+			
+		editor.open_file(path)
+		console.hud_alert(path +' Updated')
+		
+			
 def main():
 	wc = WorkingCopySync()
-	wc.present()
-
+	if len(sys.argv) <= 1:
+		wc.present()
+	else:
+		action = sys.argv[1]
+		path = sys.argv[2]
+		b64_contents = sys.argv[3]
+		
+		if action == 'copy_repo':
+			wc.urlscheme_copy_repo_from_wc(path, b64_contents)
+		elif action == 'overwrite_file':
+			wc.urlscheme_overwrite_file_with_wc_copy(path, b64_contents)
+		else:
+			console.alert('Not a valid URL scheme action...')		
+		
+		
 if __name__ == "__main__":
 	main()
