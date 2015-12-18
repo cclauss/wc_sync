@@ -1,4 +1,3 @@
-import ui
 import editor
 import os
 import console
@@ -9,29 +8,15 @@ import keychain
 import sys
 import errno
 import zipfile
-
-def is_ipad():
-	''' Helper method to determine if we are on an 
-			iPad or an iPhone
-	'''
-	width, height = ui.get_screen_size()
-	if width >= 768:
-		return True
-	else:
-		return False
-		
-def close_view(sender):
-	''' Helper method to put a close (X) button in 
-			the pyui view
-	'''
-	sender.superview.close()
+import json
+import dialogs
+import shutil
 
 class WorkingCopySync():
 	
 	def __init__(self):
 		self.key = self._get_key()
 		self.install_path = self._find_install_path()
-		self.view = ui.load_view('Working_Copy_Sync')
 		self.repo, self.path = self._get_repo_info()
 		
 	def _get_key(self):
@@ -67,22 +52,29 @@ class WorkingCopySync():
 		urlencoded_payload = urllib.urlencode(payload).replace('+', '%20')
 		url = url.format(action=action, payload=urlencoded_payload)
 		wb.open(url)
+		
+	def _get_repo_list(self):
+		action = 'repos'
+		payload = {
+			'x-success': 'pythonista://{install_path}/Working_Copy_Sync.py?action=run&argv=repo_list&argv='.format(install_path=self.install_path)
+		}
+		self._send_to_working_copy(action, payload)
 
-	def copy_repo_from_wc(self, sender):
+	def copy_repo_from_wc(self, repo_list=None):
 		''' copy a repo to the local filesystem 
 		'''
-		repo_name = console.input_alert('Repo name')
-		if not repo_name:
-			console.alert('Invalid repo name')
+		if not repo_list:
+			self._get_repo_list()
 		else:
-			action = 'zip'
-			payload = {
-				'repo': repo_name,
-				'x-success': 'pythonista://{install_path}/Working_Copy_Sync.py?action=run&argv=copy_repo&argv={repo_name}&argv='.format(install_path=self.install_path, repo_name=repo_name)
-			}
-			self._send_to_working_copy(action, payload)
-		sender.superview.close()		
-		
+			repo_name = dialogs.list_dialog(title='Select repo', items=repo_list)
+			if repo_name:
+				action = 'zip'
+				payload = {
+					'repo': repo_name,
+					'x-success': 'pythonista://{install_path}/Working_Copy_Sync.py?action=run&argv=copy_repo&argv={repo_name}&argv='.format(install_path=self.install_path, repo_name=repo_name)
+				}
+				self._send_to_working_copy(action, payload)
+			
 	def _push_file_to_wc(self, path, contents):
 		action = 'write'
 		payload = {
@@ -93,17 +85,15 @@ class WorkingCopySync():
 		}
 		self._send_to_working_copy(action, payload)
 			
-	def push_current_file_to_wc(self, sender):
+	def push_current_file_to_wc(self):
 		self._push_file_to_wc(self.path, editor.get_text())
-		sender.superview.close()
 		
-	def push_pyui_to_wc(self, sender):
+	def push_pyui_to_wc(self):
 		pyui_path, pyui_contents = self._get_pyui_contents_for_file()
 		if not pyui_contents:
-			console.alert('No PYUI file associated. Now say you\'re sorry.' ,button1='I\'m sorry.', hide_cancel_button=True)
+			console.alert('No PYUI file associated. Now say you\'re sorry.', button1='I\'m sorry.', hide_cancel_button=True)
 		else:
 			self._push_file_to_wc(pyui_path, pyui_contents)
-			sender.superview.close()
 		
 	def _get_pyui_contents_for_file(self):
 		rel_pyui_path = self.path + 'ui'
@@ -114,7 +104,7 @@ class WorkingCopySync():
 		except IOError:
 			return None, None
 			
-	def overwrite_with_wc_copy(self, sender):
+	def overwrite_with_wc_copy(self):
 		action = 'read'
 		payload = {
 			'repo': self.repo,
@@ -123,25 +113,33 @@ class WorkingCopySync():
 			'x-success': 'pythonista://{install_path}/Working_Copy_Sync.py?action=run&argv=overwrite_file&argv={full_path}&argv='.format(install_path=self.install_path, full_path=os.path.join(self.repo, self.path))
 		}
 		self._send_to_working_copy(action, payload)
-		sender.superview.close()		
 		
-	def open_repo_in_wc(self, sender):
+	def open_repo_in_wc(self):
 		action = 'open'
 		payload = {
 			'repo': self.repo
 		}
 		self._send_to_working_copy(action, payload)
-		sender.superview.close()
 
 	def present(self):
-		try:
-			if is_ipad():
-				self.view.present('sheet', hide_title_bar=True)
-			else:
-				self.view.present(hide_title_bar=True)
-		except KeyboardInterrupt:
-			pass		
-			
+		actions = ['CLONE		- Copy repo from Working Copy',
+							 'PULL		- Overwrite file with WC version',
+							 'PUSH		- Send file to WC',
+							 'PUSH UI	- Send associated PYUI to WC',
+							 'OPEN		- Open repo in WC'
+							]				
+		action_mapping = {
+			'CLONE': self.copy_repo_from_wc,
+			'PULL': self.overwrite_with_wc_copy,
+			'PUSH': self.push_current_file_to_wc,
+			'PUSH UI': self.push_pyui_to_wc,
+			'OPEN': self.open_repo_in_wc
+		}
+		action_str = dialogs.list_dialog(title='Choose action', items=actions)
+		if action_str:
+			action = action_str.split('-')[0].strip()
+			action_mapping[action]()
+		
 	def urlscheme_copy_repo_from_wc(self, path, b64_contents):
 		tmp_zip_location = self.install_path + 'repo.zip'
 		
@@ -151,6 +149,7 @@ class WorkingCopySync():
 			if e.errno != errno.EEXIST:
 				raise e
 			console.alert('Overwriting existing directory', button1='Continue')
+			shutil.rmtree(os.path.join(os.path.expanduser('~/Documents'), path))
 
 		zip_file_location = os.path.join(os.path.expanduser('~/Documents'), tmp_zip_location)
 		with open(zip_file_location, 'w') as f:
@@ -184,13 +183,15 @@ def main():
 		wc.present()
 	else:
 		action = sys.argv[1]
-		path = sys.argv[2]
-		b64_contents = sys.argv[3]
-		
 		if action == 'copy_repo':
-			wc.urlscheme_copy_repo_from_wc(path, b64_contents)
+			wc.urlscheme_copy_repo_from_wc(sys.argv[2], sys.argv[3])
 		elif action == 'overwrite_file':
-			wc.urlscheme_overwrite_file_with_wc_copy(path, b64_contents)
+			wc.urlscheme_overwrite_file_with_wc_copy(sys.argv[2], sys.argv[3])
+		elif action == 'repo_list':
+			repo_list = []
+			for repo in json.loads(sys.argv[2]):
+				repo_list.append(repo['name'])
+			wc.copy_repo_from_wc(repo_list=repo_list)
 		else:
 			console.alert('Not a valid URL scheme action...')		
 		
