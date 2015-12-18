@@ -190,7 +190,7 @@ def main():
 				repo_list.append(repo['name'])
 			wc.copy_repo_from_wc(repo_list=repo_list)
 		else:
-			console.alert('Not a valid URL scheme action...')			
+			console.alert('Not a valid URL scheme action. Now say you\'re sorry.', button1='I\'m sorry.', hide_cancel_button=True)
 		
 if __name__ == "__main__":
 	main()
