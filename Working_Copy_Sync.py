@@ -11,6 +11,7 @@ import zipfile
 import json
 import dialogs
 import shutil
+from collections import OrderedDict
 
 class WorkingCopySync():
 	
@@ -122,22 +123,18 @@ class WorkingCopySync():
 		self._send_to_working_copy(action, payload)
 
 	def present(self):
-		actions = ['CLONE		- Copy repo from Working Copy',
-							 'PULL		- Overwrite file with WC version',
-							 'PUSH		- Send file to WC',
-							 'PUSH UI	- Send associated PYUI to WC',
-							 'OPEN		- Open repo in WC'
-							]				
-		action_mapping = {
-			'CLONE': self.copy_repo_from_wc,
-			'PULL': self.overwrite_with_wc_copy,
-			'PUSH': self.push_current_file_to_wc,
-			'PUSH UI': self.push_pyui_to_wc,
-			'OPEN': self.open_repo_in_wc
-		}
-		action_str = dialogs.list_dialog(title='Choose action', items=actions)
-		if action_str:
-			action = action_str.split('-')[0].strip()
+		action_mapping = OrderedDict()
+		action_mapping['CLONE		- Copy repo from Working Copy'] = self.copy_repo_from_wc
+		action_mapping['FETCH		- Overwrite file with WC version'] = self.overwrite_with_wc_copy
+		action_mapping['PUSH		- Send file to WC'] = self.push_current_file_to_wc
+		action_mapping['PUSH UI	- Send associated PYUI to WC'] = self.push_pyui_to_wc
+		action_mapping['OPEN		- Open repo in WC'] = self.open_repo_in_wc
+
+		actions = []	
+		for action in OrderedDict(action_mapping):
+			actions.append(action)
+		action = dialogs.list_dialog(title='Choose action', items=actions)
+		if action:
 			action_mapping[action]()
 		
 	def urlscheme_copy_repo_from_wc(self, path, b64_contents):
@@ -193,8 +190,7 @@ def main():
 				repo_list.append(repo['name'])
 			wc.copy_repo_from_wc(repo_list=repo_list)
 		else:
-			console.alert('Not a valid URL scheme action...')		
-		
+			console.alert('Not a valid URL scheme action...')			
 		
 if __name__ == "__main__":
 	main()
