@@ -103,8 +103,7 @@ class WorkingCopySync():
 
 	def _get_pyui_contents_for_file(self):
 		rel_pyui_path = self.path + 'ui'
-		full_pyui_path = os.path.join(os.path.expanduser('~/Documents'),
-		os.path.join(self.repo, rel_pyui_path))
+		full_pyui_path = os.path.join(os.path.expanduser('~/Documents'), self.repo, rel_pyui_path)
 		try:
 			with open(full_pyui_path) as f:
 				return rel_pyui_path, f.read()
