@@ -60,7 +60,7 @@ class WorkingCopySync():
 		action = 'repos'
 		fmt = 'pythonista://{install_path}/Working_Copy_Sync.py?action=run&argv=repo_list&argv='
 		payload = {
-		'x-success': fmt.format(install_path=self.install_path)
+			'x-success': fmt.format(install_path=self.install_path)
 		}
 		self._send_to_working_copy(action, payload)
 
@@ -75,18 +75,18 @@ class WorkingCopySync():
 				action = 'zip'
 				fmt = 'pythonista://{install_path}/Working_Copy_Sync.py?action=run&argv=copy_repo&argv={repo_name}&argv='
 				payload = {
-				'repo': repo_name,
-				'x-success': fmt.format(install_path=self.install_path, repo_name=repo_name)
+					'repo': repo_name,
+					'x-success': fmt.format(install_path=self.install_path, repo_name=repo_name)
 				}
 				self._send_to_working_copy(action, payload)
 
 	def _push_file_to_wc(self, path, contents):
 		action = 'write'
 		payload = {
-		'repo': self.repo,
-		'path': path,
-		'text': contents,
-		'x-success': 'pythonista://{repo}/{path}?'.format(repo=self.repo, path=path)
+			'repo': self.repo,
+			'path': path,
+			'text': contents,
+			'x-success': 'pythonista://{repo}/{path}?'.format(repo=self.repo, path=path)
 		}
 		self._send_to_working_copy(action, payload)
 
@@ -97,7 +97,7 @@ class WorkingCopySync():
 		pyui_path, pyui_contents = self._get_pyui_contents_for_file()
 		if not pyui_contents:
 			console.alert("No PYUI file associated. Now say you're sorry.",
-			button1="I'm sorry.", hide_cancel_button=True)
+				button1="I'm sorry.", hide_cancel_button=True)
 		else:
 			self._push_file_to_wc(pyui_path, pyui_contents)
 
