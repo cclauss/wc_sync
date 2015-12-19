@@ -114,17 +114,17 @@ class WorkingCopySync():
 		action = 'read'
 		fmt = 'pythonista://{install_path}/Working_Copy_Sync.py?action=run&argv=overwrite_file&argv={full_path}&argv='
 		payload = {
-		'repo': self.repo,
-		'path': self.path,
-		'base64': '1',
-		'x-success': fmt.format(install_path=self.install_path, full_path=self.full_path)
+			'repo': self.repo,
+			'path': self.path,
+			'base64': '1',
+			'x-success': fmt.format(install_path=self.install_path, full_path=self.full_path)
 		}
 		self._send_to_working_copy(action, payload)
 
 	def open_repo_in_wc(self):
 		action = 'open'
 		payload = {
-		'repo': self.repo
+			'repo': self.repo
 		}
 		self._send_to_working_copy(action, payload)
 
