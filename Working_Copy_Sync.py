@@ -55,6 +55,7 @@ class WorkingCopySync():
 		wb.open(url)
 		
 	def _get_repo_list(self):
+		console.hud_alert('This may take a few seconds.', 'error')
 		action = 'repos'
 		payload = {
 			'x-success': 'pythonista://{install_path}/Working_Copy_Sync.py?action=run&argv=repo_list&argv='.format(install_path=self.install_path)
