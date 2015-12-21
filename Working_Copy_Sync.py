@@ -48,11 +48,11 @@ class WorkingCopySync():
 		return repo, path
 
 	def _send_to_working_copy(self, action, payload, x_callback_enabled=True):
-		x-callback = 'x-callback-url/' if x_callback_enabled else ''
+		x_callback = 'x-callback-url/' if x_callback_enabled else ''
 		payload['key'] = self.key
 		payload = urllib.urlencode(payload).replace('+', '%20')
-		fmt = 'working-copy://{x-callback}{action}/?{payload}'
-		url = fmt.format(x-callback=x_callback, action=action, payload=payload)
+		fmt = 'working-copy://{x_callback}{action}/?{payload}'
+		url = fmt.format(x_callback=x_callback, action=action, payload=payload)
 		wb.open(url)
 
 	def _get_repo_list(self):
@@ -130,12 +130,12 @@ class WorkingCopySync():
 
 	def present(self):
 		actions = OrderedDict()
-		actions['CLONE       - Copy repo from Working Copy'] = self.copy_repo_from_wc
-		actions['FETCH       - Overwrite file with WC version'] = self.overwrite_with_wc_copy
-		actions['PUSH        - Send file to WC'] = self.push_current_file_to_wc
-		actions['PUSH UI - Send associated PYUI to WC'] = self.push_pyui_to_wc
-		actions['OPEN        - Open repo in WC'] = self.open_repo_in_wc
-		action = dialogs.list_dialog(title='Choose action', items=actions.iterkeys())
+		actions['CLONE 	- Copy repo from Working Copy'] = self.copy_repo_from_wc
+		actions['FETCH 	- Overwrite file with WC version'] = self.overwrite_with_wc_copy
+		actions['PUSH 		- Send file to WC'] = self.push_current_file_to_wc
+		actions['PUSH UI 	- Send associated PYUI to WC'] = self.push_pyui_to_wc
+		actions['OPEN 		- Open repo in WC'] = self.open_repo_in_wc
+		action = dialogs.list_dialog(title='Choose action', items=[key for key in actions])
 		if action:
 			actions[action]()
 
@@ -172,19 +172,23 @@ class WorkingCopySync():
 		console.hud_alert(path +' Updated')
 
 
-def main(action=None, path=None, b64_contents=None):
+def main(url_action=None, url_args=None):
 	wc = WorkingCopySync()
-	if not action:
+	if not url_action:
 		wc.present()
-	elif action == 'copy_repo':
-		wc.urlscheme_copy_repo_from_wc(path, b64_contents)
-	elif action == 'overwrite_file':
-		wc.urlscheme_overwrite_file_with_wc_copy(path, b64_contents)
-	elif action == 'repo_list':
-		wc.copy_repo_from_wc(repo_list=[repo['name'] for repo in json.loads(path)])
+	elif url_action == 'copy_repo':
+		wc.urlscheme_copy_repo_from_wc(url_args[0], url_args[1])
+	elif url_action == 'overwrite_file':
+		wc.urlscheme_overwrite_file_with_wc_copy(url_args[0], url_args[1])
+	elif url_action == 'repo_list':
+		wc.copy_repo_from_wc(repo_list=[repo['name'] for repo in json.loads(url_args[0])])
 	else:
 		msg = "Not a valid URL scheme action. Now say you're sorry."
 		console.alert(msg, button1="I'm sorry.", hide_cancel_button=True)
 
 if __name__ == "__main__":
-	main(*sys.argv[1:4])
+	url_action, url_args = None, None
+	if len(sys.argv) > 1:
+		url_action = sys.argv[1]
+		url_args = sys.argv[2:]
+	main(url_action, url_args)
