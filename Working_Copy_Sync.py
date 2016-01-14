@@ -13,6 +13,8 @@ import webbrowser as wb
 import zipfile
 from collections import OrderedDict
 
+DOCS_DIR = os.path.expanduser('~/Documents')
+
 class WorkingCopySync():
 
 	def __init__(self):
@@ -37,13 +39,12 @@ class WorkingCopySync():
 		''' Dynamically find the installation path for the script
 		'''
 		app_dir = os.path.realpath(os.path.abspath(os.path.dirname(__file__)))
-		docs_dir = os.path.expanduser('~/Documents')
-		return os.path.relpath(app_dir, docs_dir)
+		return os.path.relpath(app_dir, DOCS_DIR)
 
 	def _get_repo_info(self):
-		docs_dir = os.path.expanduser('~/Documents')
 		# get the relative path and remove the leading /
-		fullPath = editor.get_path()[len(docs_dir)+1:]
+		fullPath = editor.get_path()[len(DOCS_DIR)+1:]
+		assert '/' in fullPath, '{} must be in a directory.'.format(fullPath)
 		repo, path = fullPath.split('/', 1)
 		return repo, path
 
@@ -103,7 +104,7 @@ class WorkingCopySync():
 
 	def _get_pyui_contents_for_file(self):
 		rel_pyui_path = self.path + 'ui'
-		full_pyui_path = os.path.join(os.path.expanduser('~/Documents'), self.repo, rel_pyui_path)
+		full_pyui_path = os.path.join(DOCS_DIR, self.repo, rel_pyui_path)
 		try:
 			with open(full_pyui_path) as f:
 				return rel_pyui_path, f.read()
@@ -141,8 +142,7 @@ class WorkingCopySync():
 
 	def urlscheme_copy_repo_from_wc(self, path, b64_contents):
 		tmp_zip_location = self.install_path + 'repo.zip'
-		docs_dir = os.path.expanduser('~/Documents')
-		dest = os.path.join(docs_dir, path)
+		dest = os.path.join(DOCS_DIR, path)
 		try:
 			os.makedirs(dest)
 		except OSError as e:
@@ -150,7 +150,7 @@ class WorkingCopySync():
 				raise e
 			console.alert('Overwriting existing directory', button1='Continue')
 			shutil.rmtree(dest)
-		zip_file_location = os.path.join(docs_dir, tmp_zip_location)
+		zip_file_location = os.path.join(DOCS_DIR, tmp_zip_location)
 		with open(zip_file_location, 'w') as out_file:
 			out_file.write(base64.b64decode(b64_contents))
 		with zipfile.ZipFile(zip_file_location) as in_file:
@@ -160,7 +160,7 @@ class WorkingCopySync():
 
 	def urlscheme_overwrite_file_with_wc_copy(self, path, b64_contents):
 		text = base64.b64decode(b64_contents)
-		full_file_path = os.path.join(os.path.expanduser('~/Documents'), path)
+		full_file_path = os.path.join(DOCS_DIR, path)
 		try:
 			os.makedirs(full_file_path)
 		except OSError as e:
